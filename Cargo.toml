@@ -1,0 +1,8 @@
+[package]
+name = "WinDeCon"
+version = "0.1.0"
+authors = ["PitchBlackNights <pitchblacknights@proton.me>"]
+edition = "2024"
+
+[dependencies]
+hid = { path = "hid" }
