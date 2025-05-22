@@ -1,8 +1,21 @@
 [package]
-name = "WinDeCon"
+name = "windecon"
 version = "0.1.0"
 authors = ["PitchBlackNights <pitchblacknights@proton.me>"]
 edition = "2024"
 
 [dependencies]
-hid = { path = "hid" }
+env_logger = "0.11"
+log = "0.4"
+colored = "3.0"
+chrono = "0.4"
+clap = { version = "4.5", features = ["cargo"] }
+once_cell = "1.21"
+rusb = "0.9"
+windows = { version = "0.61", features = ["Win32_System_Threading"] }
+phf = { version = "0.11" }
+
+[build-dependencies]
+vergen-git2 = { version = "1.0.7", features = ["build", "cargo", "rustc", "si", "emit_and_set"]}
+phf = { version = "0.11", default-features = false }
+phf_codegen = "0.11"
