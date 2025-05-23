@@ -8,6 +8,7 @@ use env_logger::Builder;
 use log::{LevelFilter, Record};
 use std::io::Write;
 use std::process;
+use std::thread::{self, Thread};
 
 /// Sets up the program by:
 /// 1. Set default environment variables generated at build
@@ -36,7 +37,7 @@ fn init_logger(verbose_level: u8) {
     // Determine log level based on build mode and verbosity flag
     let log_level_filter: LevelFilter = if verbose_level == 1 {
         LevelFilter::Debug
-    } else if verbose_level == 2 {
+    } else if verbose_level >= 2 {
         LevelFilter::Trace
     } else {
         LevelFilter::Info
@@ -47,7 +48,6 @@ fn init_logger(verbose_level: u8) {
             // Timestamp for time since program start
             let timestamp: DelayedFormat<StrftimeItems<'_>> = Local::now().format("%H:%M:%S.%3f");
 
-            // Check if log is from executable root (main.rs) and replace with 'main'
             let mut target: String = record.target().to_string();
             let upto: usize = target
                 .char_indices()
@@ -63,19 +63,22 @@ fn init_logger(verbose_level: u8) {
 
             let module_path: String = record.module_path().unwrap_or("UNKNOWN").to_string();
             let level: String = format!("{}{}", record.level(), " ".repeat(5 - record.level().to_string().len()));
+            let current_thread: Thread = thread::current();
+            let thread_name: &str = current_thread.name().unwrap_or("<unnamed>");
 
             // Log output format
             let log_output: String = if verbose_level >= 2 {
                 format!(
-                    "[{}] [{}] [{}/{}]: {}",
+                    "[{}] [{}] [{}/{}] [{}]: {}",
                     timestamp,
                     module_path,
                     target,
                     level,
+                    thread_name,
                     record.args(),
                 )
             } else {
-                format!("[{}] [{}/{}]: {}", timestamp, target, level, record.args(),)
+                format!("[{}] [{}/{}] [{}]: {}", timestamp, target, level, thread_name, record.args(),)
             };
 
             // Apply severity color to the whole log line

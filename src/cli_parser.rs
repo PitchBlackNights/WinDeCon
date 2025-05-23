@@ -102,7 +102,8 @@ impl Args {
             trunc_environ.replace_range(..environ.find("_").unwrap() + 1, "");
 
             let concat_string: String = match ENV_VARS.get(environ) {
-                Some(value) => {
+                Some(value) => format!("{} = {}\n", trunc_environ, value),
+                None => {
                     if environ == "CUSTOM_BIN_NAME" {
                         format!(
                             "BIN_NAME = {}\n",
@@ -112,10 +113,9 @@ impl Args {
                             }
                         )
                     } else {
-                        format!("{} = {}\n", trunc_environ, value)
+                        format!("{} = NOT_SET\n", trunc_environ)
                     }
-                }
-                None => format!("{} = NOT_SET\n", trunc_environ),
+                },
             };
 
             info_text.push_str(&concat_string);
